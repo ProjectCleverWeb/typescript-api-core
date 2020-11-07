@@ -11,10 +11,10 @@
 #
 # Happy Coding!
 
-service: src
+service: typescript-api-core
 # app and org for use with dashboard.serverless.com
 app: typescript-api-core
-org: projectcleverweb
+#org: projectcleverweb
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -22,13 +22,13 @@ frameworkVersion: '2'
 
 provider:
   name: aws
+  region: us-east-1
   runtime: nodejs12.x
-  stage: ${opt:stage, 'staging'}
-  profile: ${self:app, 'default'}-${self:provider.stage, 'staging'}
+  stage: '${opt:stage, "staging"}'
+  profile: '${self:app, "default"}-${self:provider.stage, "staging"}'
+  apiGateway:
+    shouldStartNameWithService: true
 
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -60,8 +60,14 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  apiRoot:
     handler: src/api.application
+    name: '${self:app, "default"}-${self:provider.stage}'
+    description: TypeScripts API Core
+    # memorySize: 512
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
