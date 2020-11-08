@@ -20,6 +20,10 @@ app: typescript-api-core
 # Check out our docs for more details
 frameworkVersion: '2'
 
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
 provider:
   name: aws
   region: us-east-1
@@ -61,10 +65,10 @@ provider:
 
 functions:
   apiRoot:
-    handler: src/api.application
+    handler: src/api.default
     name: '${self:app, "default"}-${self:provider.stage}'
     description: TypeScripts API Core
-    # memorySize: 512
+    memorySize: 256
     events:
       - http: ANY /
       - http: ANY {proxy+}
