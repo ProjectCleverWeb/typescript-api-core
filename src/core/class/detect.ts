@@ -16,32 +16,44 @@ export class detect {
 		return type
 	}
 	
-	public static async isNumber(value: any) : Promise<boolean> {
-		return await this.type(value) === 'number'
+	public static async isNumber(value: any, strict: boolean = true) : Promise<boolean> {
+		if (strict) {
+			return await this.type(value) === 'number'
+		}
+		return Number.isNaN(Number.parseFloat(value))
 	}
 	
-	public static async isInt(value: any) : Promise<boolean> {
-		return Number.isInteger(value)
+	public static async isInt(value: any, strict: boolean = true) : Promise<boolean> {
+		if (strict) {
+			return Number.isInteger(value)
+		}
+		return Number.isInteger(Number.parseFloat(value))
 	}
 	
-	public static async isFloat(value: any) : Promise<boolean> {
-		return await this.isNumber(value) && !await this.isInt(value)
+	public static async isFloat(value: any, strict: boolean = true) : Promise<boolean> {
+		if (strict) {
+			return await this.isNumber(value, true) && !await this.isInt(value, true)
+		}
+		return !await this.isInt(Number.parseFloat(value), false)
 	}
 	
-	public static async isFinite(value: any) : Promise<boolean> {
-		return Number.isFinite(value)
+	public static async isFinite(value: any, strict: boolean = true) : Promise<boolean> {
+		if (strict) {
+			return Number.isFinite(value)
+		}
+		return Number.isFinite(Number.parseFloat(value))
 	}
 	
-	public static async isSigned(value: any) : Promise<boolean> {
-		return Number.isSafeInteger(value)
+	public static async isSigned(value: any, strict: boolean = true) : Promise<boolean> {
+		if (strict) {
+			return Number.isSafeInteger(value)
+		}
+		return Number.isSafeInteger(Number.parseFloat(value))
 	}
 	
-	public static async isNegative(value: any) : Promise<boolean> {
-		return await this.isNumber(value) && value < 0
+	public static async isNegative(value: any, strict: boolean = true) : Promise<boolean> {
+		return await this.isNumber(value, strict) && value < 0
 	}
-	
-	
-	
 	
 }
 
