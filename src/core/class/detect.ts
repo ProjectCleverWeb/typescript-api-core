@@ -1,5 +1,7 @@
+import {foundation} from "./abstract/foundation"
 
-export type T_detectType = "null" | "array" | "nan" | "infinity" | "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+export type T_detectType = "null" | "array" | "promise" | "error" | "nan" | "infinity" | "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
+
 
 export enum E_detectNumber {
 	number,
@@ -7,37 +9,60 @@ export enum E_detectNumber {
 	string,
 }
 
-export class detect {
+export class detect extends foundation {
 	
 	/**
-	 * Detect the type of a variable. This is an extension of typeof which adds
+	 * Detect the type of a value. This is an extension of typeof which adds
 	 * support for distinguishing the following types:
 	 * - null
 	 * - array
+	 * - promise
+	 * - error
 	 * - nan
 	 * - infinity
 	 *
-	 * @param value
+	 * @param value The value you want to check the type of
 	 * @return {Promise<T_detectType>} The type of the value
 	 */
 	public static async type(value: any) : Promise<T_detectType> {
 		const type   = typeof value
-		const object = value instanceof Object
 		
-		if (value === null) {
-			return 'null'
-		} else if (type === 'number' && Number.isNaN(value)) {
-			return 'nan'
-		} else if (type === 'number' && !Number.isFinite(value)) {
-			return 'infinity'
-		} else if ((object || type === 'object') && value.constructor === Array) {
-			return 'array'
+		if (type === 'number') {
+			if (Number.isNaN(value)) {
+				return 'nan'
+			} else if (!Number.isFinite(value)) {
+				return 'infinity'
+			}
+		} else if (type === 'object') {
+			if (value === null) {
+				return 'null'
+			} else if (Array.isArray(value)) {
+				return 'array'
+			} else if (value instanceof Promise) {
+				return 'promise'
+			} else if (value instanceof Error) {
+				return 'error'
+			}
 		}
 		return type
 	}
 	
+	/**
+	 * Determine a object's type/name.
+	 *
+	 * @param object The object to check
+	 * @return {Promise<string>}
+	 */
+	public static async objectType(object: object) : Promise<string> {
+		return Object().toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+	}
+	
 	public static async isType(value: any, type: T_detectType) : Promise<boolean> {
 		return await this.type(value) === type
+	}
+	
+	public static async isObjectType(object: object, type: string) : Promise<boolean> {
+		return await this.objectType(object) === type
 	}
 	
 	public static async isNumber(value: any, strict: boolean = true) : Promise<boolean> {
@@ -45,7 +70,7 @@ export class detect {
 		if (strict) {
 			return type === 'number'
 		} else if (type in E_detectNumber) {
-			return !Number.isNaN(Number.parseFloat(value))
+			return !Number.isNaN(Number(value))
 		}
 		return false
 	}
@@ -55,7 +80,7 @@ export class detect {
 		if (strict) {
 			return type === 'number' && Number.isInteger(value)
 		} else if (type in E_detectNumber) {
-			return Number.isInteger(Number.parseFloat(value))
+			return Number.isInteger(Number(value))
 		}
 		return false
 	}
@@ -65,7 +90,7 @@ export class detect {
 		if (strict) {
 			return type === 'number' &&  !await this.isInt(value, strict)
 		} else if (type in E_detectNumber) {
-			return !await this.isInt(Number.parseFloat(value), strict)
+			return !await this.isInt(Number(value), strict)
 		}
 		return false
 	}
@@ -74,14 +99,14 @@ export class detect {
 		if (strict) {
 			return Number.isFinite(value)
 		}
-		return Number.isFinite(Number.parseFloat(value))
+		return Number.isFinite(Number(value))
 	}
 	
 	public static async isSigned(value: any, strict: boolean = true) : Promise<boolean> {
 		if (strict) {
 			return Number.isSafeInteger(value)
 		}
-		return Number.isSafeInteger(Number.parseFloat(value))
+		return Number.isSafeInteger(Number(value))
 	}
 	
 	public static async isNegative(value: any, strict: boolean = true) : Promise<boolean> {
@@ -121,6 +146,22 @@ export class detect {
 		return false
 	}
 	
+	public static async size(value: any) : Promise<number> {
+		const type = typeof value
+		if (['array', 'string', 'function'].includes(type)) {
+			return value.length
+		} else if (['number', 'bigint'].includes(type)) {
+			return value.toString().length
+		} else if (type === 'object') {
+			return Object.keys(value).length
+		} else if (type === 'boolean') {
+			return value ? 1 : 0
+		} else if (type === 'symbol' && typeof value.description === 'string') {
+			return value.description.length
+		}
+		return 0
+	}
+	
+	
 }
-
 
