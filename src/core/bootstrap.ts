@@ -35,6 +35,8 @@ export class application {
 		// 		'{} detected as': await detect.type({}),
 		// 		'() => {} detected as': await detect.type(() => {}),
 		// 		'detect.type detected as': await detect.type(detect.type),
+		// 		'Promise detected as': await detect.type(new Promise(() => {})),
+		// 		'Error detected as': await detect.type(new Error('Hello World!')),
 		// 	}
 		// ])
 		
