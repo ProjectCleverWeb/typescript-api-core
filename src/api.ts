@@ -4,4 +4,5 @@ import 'source-map-support/register'
 import { application } from './core/bootstrap'
 
 // "and the monkey flips the switch" (Launch!)
+// noinspection JSUnusedGlobalSymbols
 export default application.api
