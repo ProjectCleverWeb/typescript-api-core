@@ -65,6 +65,10 @@ export class detect extends foundation {
 		return await this.objectType(object) === type
 	}
 	
+	public static async isTypeIn(value: any, types: T_detectType[]) : Promise<boolean> {
+		return types.includes(await this.type(value))
+	}
+	
 	public static async isNumber(value: any, strict: boolean = true) : Promise<boolean> {
 		const type = await this.type(value)
 		if (strict) {
@@ -147,12 +151,13 @@ export class detect extends foundation {
 	}
 	
 	public static async size(value: any) : Promise<number> {
-		const type = typeof value
+		// it is important here that we distinguish infinity, NaN, etc
+		const type = await this.type(value)
 		if (['array', 'string', 'function'].includes(type)) {
 			return value.length
 		} else if (['number', 'bigint'].includes(type)) {
 			return value.toString().length
-		} else if (type === 'object') {
+		} else if (['object', 'promise', 'error'].includes(type)) {
 			return Object.keys(value).length
 		} else if (type === 'boolean') {
 			return value ? 1 : 0
