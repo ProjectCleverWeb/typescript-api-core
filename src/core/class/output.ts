@@ -1,5 +1,5 @@
 import { APIGatewayProxyResultV2 } from 'aws-lambda'
-import {safeDump as renderYaml} from 'js-yaml'
+import { safeDump as renderYaml } from 'js-yaml'
 
 export type T_outputBodyValue = [{ [key: string]: any }]
 
@@ -13,7 +13,7 @@ export type T_outputMeta = {
 	[key: string]: T_outputMetaValue
 }
 
-export enum E_renderMode  {
+export enum E_renderMode {
 	json = 'json',
 	yaml = 'yaml'
 }
@@ -25,16 +25,16 @@ export class output {
 	public static body: T_outputBody = {}
 	public static meta: T_outputMeta = {}
 	
-	private static _renderMode : T_renderMode = 'json'
+	private static _renderMode: T_renderMode = 'json'
 	
-	public static async renderMode(newMode: T_renderMode) :Promise<T_renderMode> {
+	public static async renderMode(newMode: T_renderMode): Promise<T_renderMode> {
 		if (typeof newMode !== 'undefined') {
 			this._renderMode = newMode
 		}
 		return this._renderMode
 	}
 	
-	public static async reset() :Promise<void> {
+	public static async reset(): Promise<void> {
 		this.meta = {}
 		this.body = {}
 	}
@@ -46,25 +46,27 @@ export class output {
 			body : this.body
 		}
 		
-		let outputString = ''
+		let outputString      = ''
 		let outputContentType = 'text/html'
 		if (this._renderMode === 'yaml') {
-			outputString = renderYaml(outputObject, {
-				lineWidth: 150,
-				noRefs: true // only important for output
+			outputString      = renderYaml(outputObject, {
+				lineWidth : 150,
+				noRefs    : true // only important for output
 			})
 			outputContentType = 'application/x-yaml'
 		} else {
-			outputString = JSON.stringify(outputObject, null, 2)
+			outputString      = JSON.stringify(outputObject, null, 2)
 			outputContentType = 'application/json'
 		}
 		
 		const output: APIGatewayProxyResultV2 = {
 			statusCode      : 200,
 			isBase64Encoded : false,
-			cookies         : [],
 			headers         : {
-				'Content-Type' : outputContentType
+				'Content-Type'                     : outputContentType,
+				'Access-Control-Allow-Origin'      : '*', // Required for CORS support to work
+				'Access-Control-Allow-Credentials' : true, // Required for cookies, authorization headers with HTTPS
+				// 'Set-Cookie' : 'myCookie=testing'
 			},
 			body            : outputString
 		}
