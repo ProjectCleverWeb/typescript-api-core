@@ -1,9 +1,9 @@
+import { Context, APIGatewayEvent, APIGatewayProxyResultV2 } from "aws-lambda";
 import {output} from "./class/output"
 import {detect} from "./class/detect"
 
-
 export class application {
-	public static async api(event: object, context: object) {
+	public static async api(event: APIGatewayEvent, context: Context) :Promise<APIGatewayProxyResultV2> {
 		await output.metaReplace('message', 'Hello from TypeScript!')
 		
 		await output.append('type_test', [
