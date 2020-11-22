@@ -16,8 +16,8 @@
 		"noUnusedLocals": true,
 		"preserveConstEnums": false,
 		"strict": true,
-    "allowJs": true,
-    "strictNullChecks": true
+		"allowJs": true,
+		"strictNullChecks": true
 	},
 	"exclude": [
 		"node_modules"

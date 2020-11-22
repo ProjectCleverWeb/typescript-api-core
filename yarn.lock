@@ -650,6 +650,18 @@
     request "^2.88.0"
     request-promise-native "^1.0.8"
 
+"@types/aws-lambda@^8.10.64":
+  version "8.10.64"
+  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.64.tgz#4bdcb725aef96bef0cb1decf19c7efff1df22fe7"
+  integrity sha512-LRKk2UQCSi7BsO5TlfSI8cTNpOGz+MH6+RXEWtuZmxJficQgxwEYJDiKVirzgyiHce0L0F4CqCVvKTwblAeOUw==
+
+"@types/aws-sdk@^2.7.0":
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/@types/aws-sdk/-/aws-sdk-2.7.0.tgz#83588b3d14ebdca1d4ce5e023387577568ce82f3"
+  integrity sha1-g1iLPRTr3KHUzl4CM4dXdWjOgvM=
+  dependencies:
+    aws-sdk "*"
+
 "@types/cacheable-request@^6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@types/cacheable-request/-/cacheable-request-6.0.1.tgz#5d22f3dded1fd3a84c0bbeb5039a7419c2c91976"
@@ -710,6 +722,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.13.30.tgz#1ed6e01e4ca576d5aec9cc802cc3bcf94c274192"
   integrity sha512-HmqFpNzp3TSELxU/bUuRK+xzarVOAsR00hzcvM0TXrMlt/+wcSLa5q6YhTb6/cA6wqDCZLDcfd8fSL95x5h7AA==
 
+"@types/prettier@^2.1.5":
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.1.5.tgz#b6ab3bba29e16b821d84e09ecfaded462b816b00"
+  integrity sha512-UEyp8LwZ4Dg30kVU2Q3amHHyTn1jEdhCIE59ANed76GaT1Vp76DD3ZWSAxgCrw6wJ0TqeoBpqmfUHiUDPs//HQ==
+
 "@types/request-promise-native@^1.0.17":
   version "1.0.17"
   resolved "https://registry.yarnpkg.com/@types/request-promise-native/-/request-promise-native-1.0.17.tgz#74a2d7269aebf18b9bdf35f01459cf0a7bfc7fab"
@@ -738,6 +755,18 @@
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/@types/retry/-/retry-0.12.0.tgz#2b35eccfcee7d38cd72ad99232fbd58bffb3c84d"
   integrity sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
+
+"@types/serverless@^1.78.10":
+  version "1.78.10"
+  resolved "https://registry.yarnpkg.com/@types/serverless/-/serverless-1.78.10.tgz#b3f1293993c3fd1898e2523ea5ef64306e9de6a9"
+  integrity sha512-MbxIeAL9gAAICExuiWzQ+Pg2pleKYaivTPOUaj0b3dr4gEpv0P9nQTwD1TyS90Vyi5tROCD32FpYwMxj17jHEA==
+
+"@types/source-map-support@^0.5.3":
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/@types/source-map-support/-/source-map-support-0.5.3.tgz#acb6b3e499c20692552d16934c16162c84594e16"
+  integrity sha512-fvjMjVH8Rmokw2dWh1dkj90iX5R8FPjeZzjNH+6eFXReh0QnHFf1YBl3B0CF0RohIAA3SDRJsGeeUWKl6d7HqA==
+  dependencies:
+    source-map "^0.6.0"
 
 "@types/tough-cookie@*":
   version "4.0.0"
@@ -988,6 +1017,21 @@ atob@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
+
+aws-sdk@*, aws-sdk@^2.797.0:
+  version "2.797.0"
+  resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.797.0.tgz#e9510a582606a580e7bbb686f01da28476599a2d"
+  integrity sha512-fFc/2Xr7NkSXlZ9+2rCOFovA9NO1OnIyEaJFVwMM9gaqzucwRAfNNT0Pa1Kua5dhWrcf/mX0Z4mCDnTBf0/5mA==
+  dependencies:
+    buffer "4.9.2"
+    events "1.1.1"
+    ieee754 "1.1.13"
+    jmespath "0.15.0"
+    querystring "0.2.0"
+    sax "1.2.1"
+    url "0.10.3"
+    uuid "3.3.2"
+    xml2js "0.4.19"
 
 aws-sdk@^2.624.0, aws-sdk@^2.786.0:
   version "2.787.0"
