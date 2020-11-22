@@ -6,7 +6,7 @@
 		"pretty": true,
 		"rootDir": "./",
 		"sourceMap": true,
-		"target": "ES5",
+		"target": "ES6",
 		"alwaysStrict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noErrorTruncation": true,
@@ -15,7 +15,9 @@
 		"noImplicitReturns": true,
 		"noUnusedLocals": true,
 		"preserveConstEnums": false,
-		"strict": true
+		"strict": true,
+    "allowJs": true,
+    "strictNullChecks": true
 	},
 	"exclude": [
 		"node_modules"
