@@ -66,7 +66,7 @@ export class output {
 				'Content-Type'                     : outputContentType,
 				'Access-Control-Allow-Origin'      : '*', // Required for CORS support to work
 				'Access-Control-Allow-Credentials' : true, // Required for cookies, authorization headers with HTTPS
-				// 'Set-Cookie' : 'myCookie=testing'
+				'Set-Cookie'                       : encodeURI('username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/')
 			},
 			body            : outputString
 		}
