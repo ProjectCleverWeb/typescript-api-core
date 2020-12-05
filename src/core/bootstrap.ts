@@ -1,10 +1,18 @@
-import { Context, APIGatewayEvent, APIGatewayProxyResultV2 } from "aws-lambda";
-import {output, E_renderMode, T_renderMode} from "./class/output"
-import {detect} from "./class/detect"
+import { Context, APIGatewayEvent, APIGatewayProxyResultV2 } from 'aws-lambda'
+import { output, E_renderMode, T_renderMode } from './class/output'
+import { detect } from './class/detect'
+import { cookie } from './class/cookie'
+import { _, debug } from './class/debug'
 
 export class application {
-	public static async api(event: APIGatewayEvent, context: Context) :Promise<APIGatewayProxyResultV2> {
+	public static async api(event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResultV2> {
 		
+		debug.checkpoint({
+			title: 'API Start'
+		})
+		
+		
+		_.log(event)
 		
 		if (await detect.type(event.queryStringParameters) === 'object') {
 			const GET = event.queryStringParameters || {}
@@ -17,14 +25,26 @@ export class application {
 		await output.reset()
 		await output._replace('message', 'Hello from TypeScript!')
 		
-		// await output.append('type_test', [
-		// 	{
-		// 		test1: await detect.isNumber(1, false),
-		// 		test2: await detect.isNumber("010110", false),
-		// 		test3: await detect.isNumber("010110sxxxd", false),
-		// 		test4: parseInt("010110sxxxd"),
-		// 	}
-		// ])
+		await output.append('type_test', [
+			{
+				test1 : await detect.isNumber(1, false),
+				test2 : await detect.isNumber('010110', false),
+				test3 : await detect.isNumber('010110sxxxd', false),
+				test4 : parseInt('010110sxxxd'),
+				test5 : await cookie.parse(await cookie.renderHeader({
+					name   : 'hello',
+					value  : 'test',
+					secure : true
+				})),
+				test6 : (await cookie.renderHeader({
+					name   : 'hello',
+					value  : 'test',
+					secure : true
+				}))
+			}
+		])
+		
+		
 		
 		await output.append('type_test', [
 			{
@@ -51,7 +71,12 @@ export class application {
 			}
 		])
 		
-		return await output.render()
+		debug.checkpoint({
+			title: 'API End'
+		})
+		await debug.renderCheckpoints()
+		let render = await output.render()
+		return render
 	}
 	
 }
