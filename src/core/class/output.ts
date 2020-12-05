@@ -7,7 +7,7 @@ export type T_outputBody = {
 	[key: string]: T_outputBodyValue
 }
 
-export type T_outputMetaValue = string | number | Array<T_outputMetaValue> | { [key: string]: T_outputMetaValue }
+export type T_outputMetaValue = string | number | bigint | Array<T_outputMetaValue> | { [key: string]: T_outputMetaValue }
 
 export type T_outputMeta = {
 	[key: string]: T_outputMetaValue
@@ -39,6 +39,16 @@ export class output {
 		this.body = {}
 	}
 	
+	public static jsonReplacer(this: any, key: string, value: any): any {
+		switch (typeof value) {
+			case 'bigint':
+				return value.toString()
+			
+			default:
+				return value
+		}
+	}
+	
 	public static async render(): Promise<APIGatewayProxyResultV2> {
 		
 		const outputObject = {
@@ -55,9 +65,10 @@ export class output {
 			})
 			outputContentType = 'application/x-yaml'
 		} else {
-			outputString      = JSON.stringify(outputObject, null, 2)
+			outputString      = JSON.stringify(outputObject, this.jsonReplacer, 2)
 			outputContentType = 'application/json'
 		}
+		
 		
 		const output: APIGatewayProxyResultV2 = {
 			statusCode      : 200,
