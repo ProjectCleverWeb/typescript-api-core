@@ -29,16 +29,8 @@ export class debug {
 		debug._initHighResolutionTime = await this.getHighResolutionTime()
 		debug._initTimestamp          = await this.getTimestamp()
 		
-		await this.checkpoint.other({
-			title       : `Request Made`,
-			preciseTime : requestTimestamp / 1e3
-		})
-		
-		await this.checkpoint.other({
-			title       : `Runtime Started`,
-			preciseTime : await this.getPreciseTime(highResolutionTime)
-		})
-		
+		await this.checkpoint.requestMade(requestTimestamp),
+		await this.checkpoint.runtimeStarted(highResolutionTime)
 		await this.checkpoint.classStaticInit(this)
 	}
 	

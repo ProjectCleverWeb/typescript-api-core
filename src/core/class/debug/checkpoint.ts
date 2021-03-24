@@ -1,4 +1,4 @@
-import { debug, E_debugLevels, T_debugLevels, T_debugPreciseTime } from '../debug'
+import { debug, E_debugLevels, T_debugHighResolutionTime, T_debugLevels, T_debugPreciseTime } from '../debug'
 import { output, T_outputMetaValue } from '../output'
 
 /**
@@ -87,9 +87,37 @@ export class checkpoint {
 	 * @returns {Promise<T_checkpointData>}
 	 */
 	public async classStaticInit(classMethodThis: Function): Promise<T_checkpointData> {
-		return await this.other({
+		return this.other({
 			title       : `Class "${classMethodThis.prototype.constructor.name}" initialized`,
 			description : 'This class has called its initializing function'
+		})
+	}
+	
+	/**
+	 * Create a checkpoint for when the request is made
+	 *
+	 * @param {T_debugPreciseTime} requestTimestamp
+	 * @returns {Promise<T_checkpointData>}
+	 */
+	public async requestMade(requestTimestamp: T_debugPreciseTime): Promise<T_checkpointData> {
+		return this.other({
+			title       : `Request Made`,
+			description : 'The time the request was made according to the Node server. (millisecond accurate)',
+			preciseTime : requestTimestamp / 1e3
+		})
+	}
+	
+	/**
+	 * Create a checkpoint for when the runtime has started
+	 *
+	 * @param {T_debugHighResolutionTime} highResolutionTime
+	 * @returns {Promise<T_checkpointData>}
+	 */
+	public async runtimeStarted(highResolutionTime: T_debugHighResolutionTime): Promise<T_checkpointData> {
+		return this.other({
+			title       : `Runtime Started`,
+			description : 'The time the request started to be processed by the runtime',
+			preciseTime : await debug.getPreciseTime(highResolutionTime)
 		})
 	}
 	
