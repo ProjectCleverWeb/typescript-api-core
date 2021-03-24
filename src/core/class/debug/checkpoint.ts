@@ -1,5 +1,7 @@
 // import { output, T_outputMetaValue } from '../output'
 
+import { debug, T_debugPreciseTime } from '../debug'
+
 export enum E_debugLevels {
 	info    = 'info',
 	notice  = 'notice',
@@ -13,22 +15,17 @@ export type T_debugCheckpointInput = {
 	title: string
 	description?: string
 	type?: T_debugLevels
-	preciseTime?: T_checkpointPreciseTime
+	preciseTime?: T_debugPreciseTime
 }
 
 export type T_debugCheckpoint = T_debugCheckpointInput & {
 	description: string
 	type: T_debugLevels
-	preciseTime: T_checkpointPreciseTime
+	preciseTime: T_debugPreciseTime
 }
 
 export type T_debugCheckpoints = T_debugCheckpoint[]
 
-export type T_checkpointTimestamp = number
-
-export type T_checkpointHighResolutionTime = [number, number]
-
-export type T_checkpointPreciseTime = number
 
 
 export const _ = console
@@ -37,36 +34,11 @@ export class checkpoint {
 	
 	public _checkpoints: T_debugCheckpoints = []
 	
-	public static _initHighResolutionTime = 0
-	public static _initTimestamp = 0
 	
 	public static async init(): Promise<void> {
-		checkpoint._initHighResolutionTime = await this.getHighResolutionTime()
-		checkpoint._initTimestamp = await this.getTimestamp()
+		
 		
 		// await this.classStaticInit(this)
-	}
-	
-	public static async getHighResolutionTime(hrTime?: T_checkpointHighResolutionTime): Promise<number> {
-		if (typeof hrTime === 'undefined') {
-			hrTime = process.hrtime()
-		}
-		return hrTime[0] + hrTime[1] / 1e9
-	}
-	
-	public static async getTimestamp(date?: Date): Promise<number> {
-		if (typeof date === 'undefined') {
-			date = new Date
-		}
-		return date.getTime() / 1e3
-	}
-	
-	public static async getPreciseRelativeTime(hrTime?: T_checkpointHighResolutionTime): Promise<T_checkpointPreciseTime> {
-		return await this.getHighResolutionTime(hrTime) - this._initHighResolutionTime
-	}
-	
-	public static async getPreciseTime(hrTime?: T_checkpointHighResolutionTime): Promise<T_checkpointPreciseTime> {
-		return this._initTimestamp + await this.getPreciseRelativeTime(hrTime)
 	}
 	
 	
@@ -82,7 +54,7 @@ export class checkpoint {
 	public async other(checkpointInput: T_debugCheckpointInput): Promise<T_debugCheckpoint> {
 		const checkpointData: T_debugCheckpoint = {
 			...checkpointInput,
-			preciseTime : checkpointInput.preciseTime ?? await checkpoint.getPreciseTime(),
+			preciseTime : checkpointInput.preciseTime ?? await debug.getPreciseTime(),
 			description : checkpointInput.description ?? '',
 			type        : checkpointInput.type ?? E_debugLevels.info
 		}

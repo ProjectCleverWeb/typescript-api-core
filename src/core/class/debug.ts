@@ -1,5 +1,5 @@
 import { output, T_outputMetaValue } from './output'
-import { checkpoint, T_checkpointPreciseTime, T_checkpointTimestamp, T_checkpointHighResolutionTime } from './debug/checkpoint'
+import { checkpoint } from './debug/checkpoint'
 
 export enum E_debugLevels {
 	info    = 'info',
@@ -29,26 +29,32 @@ export enum E_debugLevels {
 //
 // export type T_debugTimestamp = number
 //
-export type T_debugHighResolutionTime = T_checkpointHighResolutionTime
 
+export type T_debugTimestamp = number
 
-export type T_debugPreciseTime = T_checkpointPreciseTime
-export type T_debugTimestamp = T_checkpointTimestamp
+export type T_debugHighResolutionTime = [number, number]
+
+export type T_debugPreciseTime = number
 
 export const _ = console
 
 export class debug {
 	
 	
+	public static _initHighResolutionTime = 0
+	public static _initTimestamp = 0
 	public static checkpoint : checkpoint = new checkpoint
 	
 	
 	public static async init(timestamp : T_debugTimestamp, highResolutionTime : T_debugHighResolutionTime): Promise<void> {
+		debug._initHighResolutionTime = await this.getHighResolutionTime()
+		debug._initTimestamp = await this.getTimestamp()
+		
 		await checkpoint.init()
 		
 		await this.checkpoint.other({
 			title       : `Runtime Started`,
-			preciseTime : await checkpoint.getPreciseTime(highResolutionTime),
+			preciseTime : await this.getPreciseTime(highResolutionTime),
 		})
 		
 		await this.checkpoint.other({
@@ -63,6 +69,34 @@ export class debug {
 		
 		await this.checkpoint.classStaticInit(this)
 	}
+	
+	
+	
+	public static async getHighResolutionTime(hrTime?: T_debugHighResolutionTime): Promise<number> {
+		if (typeof hrTime === 'undefined') {
+			hrTime = process.hrtime()
+		}
+		return hrTime[0] + hrTime[1] / 1e9
+	}
+	
+	public static async getTimestamp(date?: Date): Promise<number> {
+		if (typeof date === 'undefined') {
+			date = new Date
+		}
+		return date.getTime() / 1e3
+	}
+	
+	public static async getPreciseRelativeTime(hrTime?: T_debugHighResolutionTime): Promise<T_debugPreciseTime> {
+		return await this.getHighResolutionTime(hrTime) - this._initHighResolutionTime
+	}
+	
+	public static async getPreciseTime(hrTime?: T_debugHighResolutionTime): Promise<T_debugPreciseTime> {
+		return this._initTimestamp + await this.getPreciseRelativeTime(hrTime)
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Simple sleep/wait function
