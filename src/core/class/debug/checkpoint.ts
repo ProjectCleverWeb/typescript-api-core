@@ -1,58 +1,76 @@
-// import { output, T_outputMetaValue } from '../output'
+import { debug, E_debugLevels, T_debugLevels, T_debugPreciseTime } from '../debug'
+import { output, T_outputMetaValue } from '../output'
 
-import { debug, T_debugPreciseTime } from '../debug'
-
-export enum E_debugLevels {
-	info    = 'info',
-	notice  = 'notice',
-	warning = 'warning',
-	error   = 'error',
-}
-
-export type T_debugLevels = keyof typeof E_debugLevels
-
-export type T_debugCheckpointInput = {
+/**
+ * Inputs allowed for a checkpoint object
+ */
+export type T_checkpointInput = {
 	title: string
 	description?: string
 	type?: T_debugLevels
 	preciseTime?: T_debugPreciseTime
 }
 
-export type T_debugCheckpoint = T_debugCheckpointInput & {
+/**
+ * Checkpoint object as it is stored
+ */
+export type T_checkpointData = T_checkpointInput & {
 	description: string
 	type: T_debugLevels
 	preciseTime: T_debugPreciseTime
 }
 
-export type T_debugCheckpoints = T_debugCheckpoint[]
+export type T_checkpointDataRendered = T_checkpointData & {
+	lap: number,
+	total: number
+}
 
-
-
-export const _ = console
+/**
+ * Array of all the current checkpoints
+ */
+export type T_checkpoints = T_checkpointData[]
 
 export class checkpoint {
 	
-	public _checkpoints: T_debugCheckpoints = []
-	
-	
-	public static async init(): Promise<void> {
-		
-		
-		// await this.classStaticInit(this)
-	}
-	
-	
+	/**
+	 * Array of all the current checkpoints
+	 *
+	 * @type {T_checkpoints}
+	 * @private
+	 */
+	private _checkpoints: T_checkpoints = []
 	
 	/**
-	 * Create a debug checkpoint. Checkpoints are used for tracking in what order
-	 * actions happen and how long between each action occurs. This is extremely
-	 * useful for finding where performance optimizations are needed.
+	 * Get all the current checkpoints
+	 *
+	 * @returns {Promise<T_checkpoints>}
+	 */
+	public async getCheckpoints(): Promise<T_checkpoints> {
+		return this._checkpoints
+	}
+	
+	/**
+	 * Clear all the current checkpoints
+	 *
+	 * @returns {Promise<void>}
+	 */
+	public async reset(): Promise<void> {
+		this._checkpoints = []
+	}
+	
+	/**
+	 * Create a general purpose debug checkpoint. (If applicable, it is preferred
+	 * for you to use one of the other checkpoint methods)
+	 *
+	 * Checkpoints are used for tracking in what order actions happen and how
+	 * long between each action occurs. This is extremely useful for finding where
+	 * performance optimizations are needed.
 	 *
 	 * @param checkpointInput
-	 * @return {Promise<T_debugCheckpoint>}
+	 * @return {Promise<T_checkpointData>}
 	 */
-	public async other(checkpointInput: T_debugCheckpointInput): Promise<T_debugCheckpoint> {
-		const checkpointData: T_debugCheckpoint = {
+	public async other(checkpointInput: T_checkpointInput): Promise<T_checkpointData> {
+		const checkpointData: T_checkpointData = {
 			...checkpointInput,
 			preciseTime : checkpointInput.preciseTime ?? await debug.getPreciseTime(),
 			description : checkpointInput.description ?? '',
@@ -62,13 +80,45 @@ export class checkpoint {
 		return checkpointData
 	}
 	
-	public async classStaticInit(classMethodThis : Function) {
-		await this.other({
-			title : `Class "${classMethodThis.prototype.constructor.name}" initialized`,
-			description: ""
+	/**
+	 * Create a checkpoint for calling a class's init() function
+	 *
+	 * @param {Function} classMethodThis
+	 * @returns {Promise<T_checkpointData>}
+	 */
+	public async classStaticInit(classMethodThis: Function): Promise<T_checkpointData> {
+		return await this.other({
+			title       : `Class "${classMethodThis.prototype.constructor.name}" initialized`,
+			description : 'This class has called its initializing function'
 		})
 	}
 	
-	
+	/**
+	 * Render all the current checkpoints to output
+	 *
+	 * @returns {Promise<void>}
+	 */
+	public async render(): Promise<void> {
+		let checkpointOutput: T_outputMetaValue[] = []
+		const checkpoints: T_checkpoints          = this._checkpoints
+		
+		let i                 = 0
+		const firstCheckpoint = checkpoints[0]
+		for (const checkpoint of checkpoints) {
+			const prevCheckpoint = checkpoints[i - 1] ?? checkpoint
+			const checkpointRendered : T_checkpointDataRendered = {
+				title       : checkpoint.title,
+				description : checkpoint.description,
+				type        : checkpoint.type,
+				preciseTime : checkpoint.preciseTime,
+				lap         : Math.round((checkpoint.preciseTime - prevCheckpoint.preciseTime) * 1e6) / 1e3,
+				total       : Math.round((checkpoint.preciseTime - firstCheckpoint.preciseTime) * 1e6) / 1e3
+			}
+			checkpointOutput.push(checkpointRendered)
+			i++
+		}
+		
+		await output._replace('checkpoints', checkpointOutput)
+	}
 	
 }

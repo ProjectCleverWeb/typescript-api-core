@@ -1,4 +1,3 @@
-import { output, T_outputMetaValue } from './output'
 import { checkpoint } from './debug/checkpoint'
 
 export enum E_debugLevels {
@@ -8,7 +7,7 @@ export enum E_debugLevels {
 	error   = 'error',
 }
 
-// export type T_debugLevels = keyof typeof E_debugLevels
+export type T_debugLevels = keyof typeof E_debugLevels
 //
 //
 //
@@ -42,34 +41,31 @@ export class debug {
 	
 	
 	public static _initHighResolutionTime = 0
-	public static _initTimestamp = 0
-	public static checkpoint : checkpoint = new checkpoint
+	public static _initTimestamp          = 0
+	public static checkpoint: checkpoint  = new checkpoint
 	
 	
-	public static async init(timestamp : T_debugTimestamp, highResolutionTime : T_debugHighResolutionTime): Promise<void> {
+	public static async init(timestamp: T_debugTimestamp, highResolutionTime: T_debugHighResolutionTime): Promise<void> {
 		debug._initHighResolutionTime = await this.getHighResolutionTime()
-		debug._initTimestamp = await this.getTimestamp()
-		
-		await checkpoint.init()
+		debug._initTimestamp          = await this.getTimestamp()
 		
 		await this.checkpoint.other({
 			title       : `Runtime Started`,
-			preciseTime : await this.getPreciseTime(highResolutionTime),
+			preciseTime : await this.getPreciseTime(highResolutionTime)
 		})
 		
 		await this.checkpoint.other({
-			title : `apple`,
+			title : `apple`
 		})
 		
 		await debug.sleep(50)
 		
 		await this.checkpoint.other({
-			title : `banana`,
+			title : `banana`
 		})
 		
 		await this.checkpoint.classStaticInit(this)
 	}
-	
 	
 	
 	public static async getHighResolutionTime(hrTime?: T_debugHighResolutionTime): Promise<number> {
@@ -95,9 +91,6 @@ export class debug {
 	}
 	
 	
-	
-	
-	
 	/**
 	 * Simple sleep/wait function
 	 *
@@ -116,28 +109,7 @@ export class debug {
 	
 	
 	public static async renderCheckpoints(): Promise<void> {
-		let checkpointOutput: T_outputMetaValue[] = []
-		
-		let i                 = 0
-		const firstCheckpoint = this.checkpoint._checkpoints[0]
-		for (const checkpoint of this.checkpoint._checkpoints) {
-			const prevCheckpoint           = this.checkpoint._checkpoints[i - 1] ?? checkpoint
-			const checkpointTimestamp      = checkpoint.preciseTime
-			const prevCheckpointTimestamp  = prevCheckpoint.preciseTime
-			const firstCheckpointTimestamp = firstCheckpoint.preciseTime
-			checkpointOutput.push({
-				title       : checkpoint.title,
-				description : checkpoint.description,
-				type        : checkpoint.type,
-				preciseTime : checkpoint.preciseTime,
-				lap         : Math.round((checkpointTimestamp - prevCheckpointTimestamp) * 1e6) / 1e3,
-				total       : Math.round((checkpointTimestamp - firstCheckpointTimestamp) * 1e6) / 1e3
-			})
-			i++
-		}
-		
-		await output._replace('checkpoints', checkpointOutput)
-		
+		await debug.checkpoint.render()
 	}
 	
 }
