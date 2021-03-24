@@ -8,26 +8,6 @@ export enum E_debugLevels {
 }
 
 export type T_debugLevels = keyof typeof E_debugLevels
-//
-//
-//
-// export type T_debugCheckpointInput = {
-// 	title: string
-// 	description?: string
-// 	type?: T_debugLevels
-// 	preciseTime?: T_debugPreciseTime
-// }
-//
-// export type T_debugCheckpoint = T_debugCheckpointInput & {
-// 	description: string
-// 	type: T_debugLevels
-// 	preciseTime: [number, number]
-// }
-//
-// export type T_debugCheckpoints = T_debugCheckpoint[]
-//
-// export type T_debugTimestamp = number
-//
 
 export type T_debugTimestamp = number
 
@@ -45,29 +25,29 @@ export class debug {
 	public static checkpoint: checkpoint  = new checkpoint
 	
 	
-	public static async init(timestamp: T_debugTimestamp, highResolutionTime: T_debugHighResolutionTime): Promise<void> {
+	public static async init(timestamp: T_debugTimestamp, highResolutionTime: T_debugHighResolutionTime, requestTimestamp: number): Promise<void> {
 		debug._initHighResolutionTime = await this.getHighResolutionTime()
 		debug._initTimestamp          = await this.getTimestamp()
+		
+		await this.checkpoint.other({
+			title       : `Request Made`,
+			preciseTime : requestTimestamp / 1e3
+		})
 		
 		await this.checkpoint.other({
 			title       : `Runtime Started`,
 			preciseTime : await this.getPreciseTime(highResolutionTime)
 		})
 		
-		await this.checkpoint.other({
-			title : `apple`
-		})
-		
-		await debug.sleep(50)
-		
-		await this.checkpoint.other({
-			title : `banana`
-		})
-		
 		await this.checkpoint.classStaticInit(this)
 	}
 	
-	
+	/**
+	 * Get a high resolution time (in seconds) as a float
+	 *
+	 * @param {T_debugHighResolutionTime} hrTime The value returned from `process.hrtime()`
+	 * @returns {Promise<number>} The high resolution time as a float
+	 */
 	public static async getHighResolutionTime(hrTime?: T_debugHighResolutionTime): Promise<number> {
 		if (typeof hrTime === 'undefined') {
 			hrTime = process.hrtime()
@@ -75,6 +55,12 @@ export class debug {
 		return hrTime[0] + hrTime[1] / 1e9
 	}
 	
+	/**
+	 * Get a timestamp (in seconds) as a float
+	 *
+	 * @param {Date} date An instance of Date
+	 * @returns {Promise<number>} The timestamp (in seconds) as a float
+	 */
 	public static async getTimestamp(date?: Date): Promise<number> {
 		if (typeof date === 'undefined') {
 			date = new Date
@@ -82,14 +68,29 @@ export class debug {
 		return date.getTime() / 1e3
 	}
 	
+	/**
+	 * Get a high resolution timestamp, relative to when the request was made
+	 *
+	 * @param {T_debugHighResolutionTime} hrTime The value returned from `process.hrtime()`
+	 * @returns {Promise<T_debugPreciseTime>} The relative high resolution time as a float
+	 */
 	public static async getPreciseRelativeTime(hrTime?: T_debugHighResolutionTime): Promise<T_debugPreciseTime> {
 		return await this.getHighResolutionTime(hrTime) - this._initHighResolutionTime
 	}
 	
+	/**
+	 * Get a really precise timestamp, with nanosecond accuracy. (seconds as
+	 * a float) This is useful for checking how performant code is running.
+	 *
+	 * This is essentially a combination of high resolution time and a unix
+	 * timestamp.
+	 *
+	 * @param {T_debugHighResolutionTime} hrTime The value returned from `process.hrtime()`
+	 * @returns {Promise<T_debugPreciseTime>} The precise unix timestamp as a float
+	 */
 	public static async getPreciseTime(hrTime?: T_debugHighResolutionTime): Promise<T_debugPreciseTime> {
 		return this._initTimestamp + await this.getPreciseRelativeTime(hrTime)
 	}
-	
 	
 	/**
 	 * Simple sleep/wait function

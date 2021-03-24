@@ -105,8 +105,8 @@ export class checkpoint {
 		let i                 = 0
 		const firstCheckpoint = checkpoints[0]
 		for (const checkpoint of checkpoints) {
-			const prevCheckpoint = checkpoints[i - 1] ?? checkpoint
-			const checkpointRendered : T_checkpointDataRendered = {
+			const prevCheckpoint                               = checkpoints[i - 1] ?? checkpoint
+			const checkpointRendered: T_checkpointDataRendered = {
 				title       : checkpoint.title,
 				description : checkpoint.description,
 				type        : checkpoint.type,
