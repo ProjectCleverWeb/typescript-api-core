@@ -9,10 +9,10 @@ import { application } from './core/bootstrap'
 import { Context, APIGatewayEvent, APIGatewayProxyResultV2 } from 'aws-lambda'
 
 // "and the monkey flips the switch" (Launch!)
-export default (async(event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResultV2> => {
+export default (async(eventData: APIGatewayEvent, contextData: Context): Promise<APIGatewayProxyResultV2> => {
 	return (await application.api(
 		timestamp,
 		highResolutionTime,
-		event.requestContext.requestTimeEpoch
-	))(event, context)
+		eventData.requestContext.requestTimeEpoch
+	))(eventData, contextData)
 })
