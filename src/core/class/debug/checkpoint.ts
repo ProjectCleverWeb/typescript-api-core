@@ -20,6 +20,9 @@ export type T_checkpointData = T_checkpointInput & {
 	preciseTime: T_debugPreciseTime
 }
 
+/**
+ * Checkpoint object as it is rendered for output
+ */
 export type T_checkpointDataRendered = T_checkpointData & {
 	lap: number,
 	total: number
