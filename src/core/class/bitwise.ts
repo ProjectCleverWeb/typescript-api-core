@@ -90,7 +90,7 @@ export class bitwise {
 			return Array(bits).map(function (bit) :number {
 				return Number(bit)
 			})
-		} else if (await detect.isInt(bits)) {
+		} else if (await detect.isInteger(bits)) {
 			const bitString = (Number(bits) >>> 0).toString(2).split("")
 			return bitString.map(function (bit) :number {
 				return parseInt(bit, 10);
