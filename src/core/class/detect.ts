@@ -1,3 +1,4 @@
+import { A_foundation } from './abstract/A_foundation'
 
 /**
  * All the detectable types as a enum
@@ -98,7 +99,7 @@ export type T_detectTypeGroupObject = keyof typeof E_detectTypeGroupObject
 /**
  * This class is compilation of functions used for detecting various things
  */
-export class detect {
+export class detect extends A_foundation {
 	
 	/**
 	 * Detect the type of a value. This is an extension of typeof which adds
