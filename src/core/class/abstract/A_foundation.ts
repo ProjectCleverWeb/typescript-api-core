@@ -7,7 +7,7 @@ export abstract class A_foundation {
 	}
 	
 	public static test = async() => {
-		console.log('Hello World!')
+		console.log('Hello World!!!')
 	}
 	
 	
