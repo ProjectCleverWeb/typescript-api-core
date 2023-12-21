@@ -11,9 +11,16 @@
 		"source-map-support": "*"
 	},
 	"scripts": {
-		"start": "sls offline",
-		"build": "sls package",
-		"deploy": "sls deploy"
+		"dev.start": "sls offline",
+		"dev.build": "sls package",
+		"dev.deploy": "sls deploy",
+		"code.autoFormat.prettier": "yarn prettier . --write src/",
+		"code.checkFormat.prettier": "npx prettier . --check src/",
+		"code.autoFormat.eslint": "yarn eslint ./src --fix",
+		"code.checkFormat.eslint": "yarn eslint ./src",
+		"code.autoFormat": "yarn run code.autoFormat.prettier && yarn run code.autoFormat.eslint",
+		"code.checkFormat": "yarn run code.checkFormat.prettier && yarn run code.checkFormat.eslint",
+		"dev.prepare": "husky install"
 	},
 	"devDependencies": {
 		"@microsoft/tsdoc": "*",
@@ -21,23 +28,49 @@
 		"@types/node": "*",
 		"@types/serverless": "*",
 		"@types/source-map-support": "*",
+		"@typescript-eslint/eslint-plugin": "^6.15.0",
+		"@typescript-eslint/parser": "^6.15.0",
+		"eslint": "^8.56.0",
 		"gts": "*",
+		"husky": "^8.0.3",
+		"lint-staged": "^15.2.0",
 		"prettier": "*",
 		"serverless": "*",
 		"serverless-offline": "*",
 		"serverless-plugin-typescript": "*",
 		"source-map-support": "*",
 		"typedoc": "*",
-		"typescript": "*"
+		"typescript": "^5.3.3"
 	},
 	"prettier": {
 		"singleQuote": true,
 		"useTabs": true,
 		"semi": false,
-		"trailingComma": "none",
+		"trailingComma": "all",
 		"arrowParens": "always",
-		"printWidth": 150,
 		"tabWidth": 2,
-		"quoteProps": "as-needed"
+		"quoteProps": "consistent",
+		"experimentalTernaries": true,
+		"jsxSingleQuote": true,
+		"bracketSpacing": true,
+		"bracketSameLine": true,
+		"htmlWhitespaceSensitivity": "ignore",
+		"endOfLine": "lf",
+		"embeddedLanguageFormatting": "auto",
+		"singleAttributePerLine": true
+	},
+	"lint-staged": {
+		"src/**/*": "prettier --write --ignore-unknown"
+	},
+	"eslintConfig": {
+		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/recommended"
+		],
+		"parser": "@typescript-eslint/parser",
+		"plugins": [
+			"@typescript-eslint"
+		],
+		"root": true
 	}
 }
