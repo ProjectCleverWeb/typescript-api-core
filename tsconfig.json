@@ -27,7 +27,6 @@
 	],
 	"typedocOptions": {
 		"name": "TypeScript API Core",
-		"theme": "./node_modules/typedoc-vortex-theme/bin/default",
 		"mode": "file",
 		"out": "docs"
 	}
