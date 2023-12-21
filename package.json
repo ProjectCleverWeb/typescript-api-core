@@ -93,15 +93,63 @@
 					"selector": [
 						"variable",
 						"function",
-						"class",
 						"interface",
 						"method",
-						"typeLike",
 						"variableLike"
 					],
 					"format": [
-						"PascalCase"
+						"camelCase"
 					]
+				},
+				{
+					"selector": [
+						"class"
+					],
+					"format": [],
+					"custom": {
+						"regex": "^([AEIT]_)?[a-z][a-zA-Z0-9]*$",
+						"match": true
+					}
+				},
+				{
+					"selector": [
+						"class"
+					],
+					"format": [],
+					"modifiers": ["abstract"],
+					"prefix": ["A_"]
+				},
+				{
+					"selector": [
+						"typeAlias",
+						"typeParameter"
+					],
+					"format": [],
+					"prefix": ["T_"]
+				},
+				{
+					"selector": [
+						"enum"
+					],
+					"format": [],
+					"prefix": ["E_"]
+				},
+				{
+					"selector": [
+						"interface"
+					],
+					"format": [],
+					"prefix": ["I_"]
+				},
+				{
+					"selector": "memberLike",
+					"modifiers": [
+						"private"
+					],
+					"format": [
+						"camelCase"
+					],
+					"leadingUnderscore": "require"
 				}
 			]
 		}
