@@ -1,9 +1,8 @@
-
 const bitwise = {
 	bit1: 1 << 0,
 	bit2: 1 << 1,
 	bit3: 1 << 2,
-	bit4: 1 << 3,
+	bit4: 1 << 3
 }
 
 export enum E_ioTypes {
@@ -15,5 +14,3 @@ export class io {
 		return 1 + type
 	}
 }
-
-

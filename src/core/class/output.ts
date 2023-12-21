@@ -21,80 +21,77 @@ export enum E_renderMode {
 export type T_renderMode = keyof typeof E_renderMode
 
 export class output {
-	
 	public static body: T_outputBody = {}
 	public static meta: T_outputMeta = {}
-	
+
 	private static _renderMode: T_renderMode = 'json'
-	
+
 	public static async renderMode(newMode: T_renderMode): Promise<T_renderMode> {
 		if (typeof newMode !== 'undefined') {
 			this._renderMode = newMode
 		}
 		return this._renderMode
 	}
-	
+
 	public static async reset(): Promise<void> {
 		this.meta = {}
 		this.body = {}
 	}
-	
+
 	public static jsonReplacer(this: any, key: string, value: any): any {
 		switch (typeof value) {
 			case 'bigint':
 				return value.toString()
-			
+
 			default:
 				return value
 		}
 	}
-	
+
 	public static async render(): Promise<APIGatewayProxyResultV2> {
-		
 		const outputObject = {
-			meta : this.meta,
-			body : this.body
+			meta: this.meta,
+			body: this.body
 		}
-		
-		let outputString      = ''
+
+		let outputString = ''
 		let outputContentType = 'text/html'
 		if (this._renderMode === 'yaml') {
-			outputString      = renderYaml(outputObject, {
-				lineWidth : 150,
-				noRefs    : true // only important for output
+			outputString = renderYaml(outputObject, {
+				lineWidth: 150,
+				noRefs: true // only important for output
 			})
 			outputContentType = 'application/x-yaml'
 		} else {
-			outputString      = JSON.stringify(outputObject, this.jsonReplacer, 2)
+			outputString = JSON.stringify(outputObject, this.jsonReplacer, 2)
 			outputContentType = 'application/json'
 		}
-		
-		
+
 		const output: APIGatewayProxyResultV2 = {
-			statusCode      : 200,
-			isBase64Encoded : false,
-			headers         : {
-				'Content-Type'                     : outputContentType,
-				'Access-Control-Allow-Origin'      : '*', // Required for CORS support to work
-				'Access-Control-Allow-Credentials' : true, // Required for cookies, authorization headers with HTTPS
-				'Set-Cookie'                       : encodeURI('username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/')
+			statusCode: 200,
+			isBase64Encoded: false,
+			headers: {
+				'Content-Type': outputContentType,
+				'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+				'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS
+				'Set-Cookie': encodeURI('username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/')
 			},
-			body            : outputString
+			body: outputString
 		}
 		console.log('Request Output: \n' + output.body)
 		return output
 	}
-	
+
 	public static async replace(key: string, value: T_outputBodyValue) {
 		this.body[key] = value
 		return value
 	}
-	
+
 	public static async _replace(key: string, value: T_outputMetaValue) {
 		this.meta[key] = value
 		return value
 	}
-	
+
 	public static async append(key: string, value: T_outputBodyValue) {
 		if (await this.exists(key)) {
 			this.body[key].push(...value)
@@ -103,12 +100,8 @@ export class output {
 		}
 		return value
 	}
-	
+
 	public static async exists(key: string) {
 		return typeof this.body[key] !== 'undefined'
 	}
-	
-	
 }
-
-

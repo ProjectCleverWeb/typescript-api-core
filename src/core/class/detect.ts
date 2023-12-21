@@ -4,20 +4,20 @@ import { A_foundation } from './abstract/A_foundation'
  * All the detectable types as a enum
  */
 export enum E_detectType {
-	null      = 'null',
+	null = 'null',
 	undefined = 'undefined',
-	number    = 'number',
-	bigint    = 'bigint',
-	infinity  = 'infinity',
-	string    = 'string',
-	boolean   = 'boolean',
-	object    = 'object',
-	array     = 'array',
-	promise   = 'promise',
-	error     = 'error',
-	nan       = 'nan',
-	symbol    = 'symbol',
-	function  = 'function'
+	number = 'number',
+	bigint = 'bigint',
+	infinity = 'infinity',
+	string = 'string',
+	boolean = 'boolean',
+	object = 'object',
+	array = 'array',
+	promise = 'promise',
+	error = 'error',
+	nan = 'nan',
+	symbol = 'symbol',
+	function = 'function'
 }
 
 /**
@@ -29,7 +29,7 @@ export type T_detectType = keyof typeof E_detectType
  * The types that are considered nullable as a enum
  */
 export enum E_detectTypeGroupNullable {
-	null      = E_detectType.null,
+	null = E_detectType.null,
 	undefined = E_detectType.undefined
 }
 
@@ -42,8 +42,8 @@ export type T_detectTypeGroupNullable = keyof typeof E_detectTypeGroupNullable
  * The types that are considered numeric as a enum
  */
 export enum E_detectTypeGroupNumeric {
-	number   = E_detectType.number,
-	bigint   = E_detectType.bigint,
+	number = E_detectType.number,
+	bigint = E_detectType.bigint,
 	infinity = E_detectType.infinity
 }
 
@@ -58,7 +58,7 @@ export type T_detectTypeGroupNumeric = keyof typeof E_detectTypeGroupNumeric
 export enum E_detectTypeGroupParsableNumeric {
 	number = E_detectType.number,
 	string = E_detectType.string,
-	bigint = E_detectType.bigint,
+	bigint = E_detectType.bigint
 }
 
 /**
@@ -70,8 +70,8 @@ export type T_detectTypeGroupParsableNumeric = typeof E_detectTypeGroupParsableN
  * The types that are considered scalar as a enum
  */
 export enum E_detectTypeGroupScalar {
-	number  = E_detectType.number,
-	string  = E_detectType.string,
+	number = E_detectType.number,
+	string = E_detectType.string,
 	boolean = E_detectType.boolean
 }
 
@@ -84,11 +84,11 @@ export type T_detectTypeGroupScalar = keyof typeof E_detectTypeGroupScalar
  * The types that are considered object as a enum
  */
 export enum E_detectTypeGroupObject {
-	object  = E_detectType.object,
-	null    = E_detectType.null,
-	array   = E_detectType.array,
+	object = E_detectType.object,
+	null = E_detectType.null,
+	array = E_detectType.array,
 	promise = E_detectType.promise,
-	error   = E_detectType.error
+	error = E_detectType.error
 }
 
 /**
@@ -100,7 +100,6 @@ export type T_detectTypeGroupObject = keyof typeof E_detectTypeGroupObject
  * This class is compilation of functions used for detecting various things
  */
 export class detect extends A_foundation {
-	
 	/**
 	 * Detect the type of a value. This is an extension of typeof which adds
 	 * support for distinguishing the following types:
@@ -116,7 +115,7 @@ export class detect extends A_foundation {
 	 */
 	public static async type(value: any): Promise<T_detectType> {
 		const type = typeof value
-		
+
 		if (type === 'number') {
 			if (Number.isNaN(value)) {
 				return 'nan'
@@ -136,7 +135,7 @@ export class detect extends A_foundation {
 		}
 		return type
 	}
-	
+
 	/**
 	 * Determine a object's type/name.
 	 *
@@ -144,9 +143,12 @@ export class detect extends A_foundation {
 	 * @return {Promise<string>} The object type
 	 */
 	public static async objectType(object: object): Promise<string> {
-		return Object().toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
+		return Object()
+			.toString.call(object)
+			.match(/\s([a-zA-Z]+)/)[1]
+			.toLowerCase()
 	}
-	
+
 	/**
 	 * Check if value is a specific type
 	 *
@@ -155,9 +157,9 @@ export class detect extends A_foundation {
 	 * @returns {Promise<boolean>} True if type matched, false otherwise
 	 */
 	public static async isType(value: any, type: T_detectType): Promise<boolean> {
-		return await this.type(value) === type
+		return (await this.type(value)) === type
 	}
-	
+
 	/**
 	 * Check if object is a specific type
 	 *
@@ -166,9 +168,9 @@ export class detect extends A_foundation {
 	 * @returns {Promise<boolean>} True if type matched, false otherwise
 	 */
 	public static async isObjectType(object: object, type: string): Promise<boolean> {
-		return await this.objectType(object) === type
+		return (await this.objectType(object)) === type
 	}
-	
+
 	/**
 	 * Check if value is 1 of many types
 	 *
@@ -179,7 +181,7 @@ export class detect extends A_foundation {
 	public static async isTypeIn(value: any, types: T_detectType[]): Promise<boolean> {
 		return types.includes(await this.type(value))
 	}
-	
+
 	/**
 	 * Check if a value is a nullable type ('undefined' or 'null')
 	 *
@@ -189,7 +191,7 @@ export class detect extends A_foundation {
 	public static async isNullable(value: any): Promise<boolean> {
 		return await this.isTypeIn(value, ['null', 'undefined'])
 	}
-	
+
 	/**
 	 * Check if a value can be considered empty.
 	 *
@@ -214,12 +216,12 @@ export class detect extends A_foundation {
 			return value === ''
 		} else if (type === 'bigint') {
 			return value.toString() === '0'
-		} else if (await this.size(value) === 0) {
+		} else if ((await this.size(value)) === 0) {
 			return true
 		}
 		return false
 	}
-	
+
 	/**
 	 * Check if a value is a number
 	 *
@@ -236,7 +238,7 @@ export class detect extends A_foundation {
 		}
 		return false
 	}
-	
+
 	/**
 	 * Check if a value is a integer
 	 *
@@ -253,7 +255,7 @@ export class detect extends A_foundation {
 		}
 		return false
 	}
-	
+
 	/**
 	 * Check if a value is a float
 	 *
@@ -270,7 +272,7 @@ export class detect extends A_foundation {
 		}
 		return false
 	}
-	
+
 	/**
 	 * Check if a value is a finite number
 	 *
@@ -284,7 +286,7 @@ export class detect extends A_foundation {
 		}
 		return Number.isFinite(value)
 	}
-	
+
 	/**
 	 * Check if a value is a signed integer
 	 *
@@ -298,7 +300,7 @@ export class detect extends A_foundation {
 		}
 		return Number.isSafeInteger(value)
 	}
-	
+
 	/**
 	 * Check if a value is a negative number
 	 *
@@ -307,9 +309,9 @@ export class detect extends A_foundation {
 	 * @returns {Promise<boolean>} True if the value is considered a negative number, false otherwise
 	 */
 	public static async isNegative(value: any, strict: boolean = true): Promise<boolean> {
-		return await this.isNumber(value, strict) && value < 0
+		return (await this.isNumber(value, strict)) && value < 0
 	}
-	
+
 	/**
 	 * Check if a value is a binary string
 	 *
@@ -317,9 +319,9 @@ export class detect extends A_foundation {
 	 * @returns {Promise<boolean>} True if the value is considered a binary string, false otherwise
 	 */
 	public static async isBinaryString(value: any): Promise<boolean> {
-		return await this.isType(value, 'string') && /\A[01]\Z/.test(value)
+		return (await this.isType(value, 'string')) && /\A[01]\Z/.test(value)
 	}
-	
+
 	/**
 	 * Check if a value is a boolean
 	 *
@@ -331,7 +333,7 @@ export class detect extends A_foundation {
 		const type = await this.type(value)
 		if (type === 'boolean') {
 			return true
-		} else if (!strict && await this.isInteger(value, false)) {
+		} else if (!strict && (await this.isInteger(value, false))) {
 			value = Number(value)
 			switch (value) {
 				case 0:
@@ -341,7 +343,7 @@ export class detect extends A_foundation {
 		}
 		return false
 	}
-	
+
 	/**
 	 * Checks the size (aka length) of a value
 	 *
@@ -366,7 +368,4 @@ export class detect extends A_foundation {
 		}
 		return -1
 	}
-	
-	
 }
-
