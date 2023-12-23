@@ -1,5 +1,12 @@
-import { debug, E_debugLevels, T_debugHighResolutionTime, T_debugLevels, T_debugPreciseTime } from '../debug'
+import {
+	debug,
+	E_debugLevels,
+	T_debugHighResolutionTime,
+	T_debugLevels,
+	T_debugPreciseTime,
+} from '../debug'
 import { output, T_outputMetaValue } from '../output'
+import { A_foundation } from '../abstract/A_foundation'
 
 /**
  * Inputs allowed for a checkpoint object
@@ -71,12 +78,15 @@ export class checkpoint {
 	 * @param checkpointInput
 	 * @return {Promise<T_checkpointData>}
 	 */
-	public async other(checkpointInput: T_checkpointInput): Promise<T_checkpointData> {
+	public async other(
+		checkpointInput: T_checkpointInput,
+	): Promise<T_checkpointData> {
 		const checkpointData: T_checkpointData = {
 			...checkpointInput,
-			preciseTime: checkpointInput.preciseTime ?? (await debug.getPreciseTime()),
+			preciseTime:
+				checkpointInput.preciseTime ?? (await debug.getPreciseTime()),
 			description: checkpointInput.description ?? '',
-			type: checkpointInput.type ?? E_debugLevels.info
+			type: checkpointInput.type ?? E_debugLevels.info,
 		}
 		this._checkpoints.push(checkpointData)
 		return checkpointData
@@ -88,10 +98,12 @@ export class checkpoint {
 	 * @param {Function} classMethodThis
 	 * @returns {Promise<T_checkpointData>}
 	 */
-	public async classStaticInit(classMethodThis: Function): Promise<T_checkpointData> {
+	public async classStaticInit(
+		classMethodThis: typeof A_foundation,
+	): Promise<T_checkpointData> {
 		return this.other({
-			title: `Class "${classMethodThis.prototype.constructor.name}" initialized`,
-			description: 'This class has called its initializing function'
+			title: `Class "${classMethodThis.constructor.name}" initialized`,
+			description: 'This class has called its initializing function',
 		})
 	}
 
@@ -101,11 +113,14 @@ export class checkpoint {
 	 * @param {T_debugPreciseTime} requestTimestamp
 	 * @returns {Promise<T_checkpointData>}
 	 */
-	public async requestMade(requestTimestamp: T_debugPreciseTime): Promise<T_checkpointData> {
+	public async requestMade(
+		requestTimestamp: T_debugPreciseTime,
+	): Promise<T_checkpointData> {
 		return this.other({
 			title: `Request Made`,
-			description: 'The time the request was made according to the Node server. (millisecond accurate)',
-			preciseTime: requestTimestamp / 1e3
+			description:
+				'The time the request was made according to the Node server. (millisecond accurate)',
+			preciseTime: requestTimestamp / 1e3,
 		})
 	}
 
@@ -115,11 +130,14 @@ export class checkpoint {
 	 * @param {T_debugHighResolutionTime} highResolutionTime
 	 * @returns {Promise<T_checkpointData>}
 	 */
-	public async runtimeStarted(highResolutionTime: T_debugHighResolutionTime): Promise<T_checkpointData> {
+	public async runtimeStarted(
+		highResolutionTime: T_debugHighResolutionTime,
+	): Promise<T_checkpointData> {
 		return this.other({
 			title: `Runtime Started`,
-			description: 'The time the request started to be processed by the runtime',
-			preciseTime: await debug.getPreciseTime(highResolutionTime)
+			description:
+				'The time the request started to be processed by the runtime',
+			preciseTime: await debug.getPreciseTime(highResolutionTime),
 		})
 	}
 
@@ -129,7 +147,7 @@ export class checkpoint {
 	 * @returns {Promise<void>}
 	 */
 	public async render(): Promise<void> {
-		let checkpointOutput: T_outputMetaValue[] = []
+		const checkpointOutput: T_outputMetaValue[] = []
 		const checkpoints: T_checkpoints = this._checkpoints
 
 		let i = 0
@@ -141,8 +159,14 @@ export class checkpoint {
 				description: checkpoint.description,
 				type: checkpoint.type,
 				preciseTime: checkpoint.preciseTime,
-				lap: Math.round((checkpoint.preciseTime - prevCheckpoint.preciseTime) * 1e6) / 1e3,
-				total: Math.round((checkpoint.preciseTime - firstCheckpoint.preciseTime) * 1e6) / 1e3
+				lap:
+					Math.round(
+						(checkpoint.preciseTime - prevCheckpoint.preciseTime) * 1e6,
+					) / 1e3,
+				total:
+					Math.round(
+						(checkpoint.preciseTime - firstCheckpoint.preciseTime) * 1e6,
+					) / 1e3,
 			}
 			checkpointOutput.push(checkpointRendered)
 			i++

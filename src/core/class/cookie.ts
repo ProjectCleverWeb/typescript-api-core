@@ -1,6 +1,13 @@
-import { CookieSerializeOptions, parse as cookieParse, serialize as cookieSerialize } from 'cookie'
+import {
+	CookieSerializeOptions,
+	parse as cookieParse,
+	serialize as cookieSerialize,
+} from 'cookie'
 
-export type T_cookieSameSite = E_cookieSameSite | keyof typeof E_cookieSameSite | boolean
+export type T_cookieSameSite =
+	| E_cookieSameSite
+	| keyof typeof E_cookieSameSite
+	| boolean
 
 export type T_cookieObjectInputString = {
 	value: string
@@ -10,7 +17,10 @@ export type T_cookieObjectInputObject = {
 	value: object
 }
 
-export type T_cookieObjectInput = (T_cookieObjectInputString | T_cookieObjectInputObject) & {
+export type T_cookieObjectInput = (
+	| T_cookieObjectInputString
+	| T_cookieObjectInputObject
+) & {
 	name: string
 	jsonDataCookie?: boolean
 	domain?: string
@@ -33,7 +43,7 @@ export enum E_cookieSameSite {
 	false,
 	lax,
 	strict,
-	none
+	none,
 }
 
 export type T_cookieState = {
@@ -72,35 +82,43 @@ export class cookie {
 		return cookie._suffix
 	}
 
-	public static add = async (cookieObjectInput: T_cookieObjectInput): Promise<void> => {
+	public static add = async (
+		cookieObjectInput: T_cookieObjectInput,
+	): Promise<void> => {
 		cookie._cookies[cookieObjectInput.name] = {
 			...cookieObjectInput,
 			...{
 				parsed: false,
 				emitted: false,
-				jsonDataCookie: cookieObjectInput.jsonDataCookie ?? cookie._jsonDataCookieDefault
-			}
+				jsonDataCookie:
+					cookieObjectInput.jsonDataCookie ?? cookie._jsonDataCookieDefault,
+			},
 		}
 	}
 
-	public static addParsed = async (cookieObjectInput: T_cookieObjectInput): Promise<void> => {
+	public static addParsed = async (
+		cookieObjectInput: T_cookieObjectInput,
+	): Promise<void> => {
 		cookie._cookies[cookieObjectInput.name] = {
 			...cookieObjectInput,
 			...{
 				parsed: true,
 				emitted: true,
-				jsonDataCookie: cookieObjectInput.jsonDataCookie ?? cookie._jsonDataCookieDefault
-			}
+				jsonDataCookie:
+					cookieObjectInput.jsonDataCookie ?? cookie._jsonDataCookieDefault,
+			},
 		}
 	}
 
-	public static renderHeader = async (cookieObject: T_cookieObjectInput): Promise<string> => {
-		let options: CookieSerializeOptions = {
+	public static renderHeader = async (
+		cookieObject: T_cookieObjectInput,
+	): Promise<string> => {
+		const options: CookieSerializeOptions = {
 			domain: cookieObject.domain,
 			encode: cookieObject.encoder,
 			httpOnly: cookieObject.httpOnly,
 			path: cookieObject.path,
-			secure: cookieObject.secure
+			secure: cookieObject.secure,
 		}
 
 		// Using both max age and expires can lead to unexpected issues, so we forcing using only 1 or the other
@@ -110,30 +128,53 @@ export class cookie {
 			options.expires = cookieObject.expires
 		}
 
-		if (cookieObject.sameSite === true || cookieObject.sameSite === E_cookieSameSite.true || cookieObject.sameSite === 'true') {
+		if (
+			cookieObject.sameSite === true ||
+			cookieObject.sameSite === E_cookieSameSite.true ||
+			cookieObject.sameSite === 'true'
+		) {
 			options.sameSite = true
-		} else if (cookieObject.sameSite === false || cookieObject.sameSite === E_cookieSameSite.false || cookieObject.sameSite === 'false') {
+		} else if (
+			cookieObject.sameSite === false ||
+			cookieObject.sameSite === E_cookieSameSite.false ||
+			cookieObject.sameSite === 'false'
+		) {
 			options.sameSite = false
-		} else if (cookieObject.sameSite === E_cookieSameSite.lax || cookieObject.sameSite === 'lax') {
+		} else if (
+			cookieObject.sameSite === E_cookieSameSite.lax ||
+			cookieObject.sameSite === 'lax'
+		) {
 			options.sameSite = 'lax'
-		} else if (cookieObject.sameSite === E_cookieSameSite.strict || cookieObject.sameSite === 'strict') {
+		} else if (
+			cookieObject.sameSite === E_cookieSameSite.strict ||
+			cookieObject.sameSite === 'strict'
+		) {
 			options.sameSite = 'strict'
-		} else if (cookieObject.sameSite === E_cookieSameSite.none || cookieObject.sameSite === 'none') {
+		} else if (
+			cookieObject.sameSite === E_cookieSameSite.none ||
+			cookieObject.sameSite === 'none'
+		) {
 			options.sameSite = 'none'
 		}
 
 		if (cookieObject.jsonDataCookie) {
-			return cookieSerialize(cookie._prefix + cookieObject.name + cookie._suffix + '_jsonDataCookie', JSON.stringify(cookieObject), options)
+			return cookieSerialize(
+				cookie._prefix + cookieObject.name + cookie._suffix + '_jsonDataCookie',
+				JSON.stringify(cookieObject),
+				options,
+			)
 		}
 		return cookieSerialize(
 			cookie._prefix + cookieObject.name + cookie._suffix,
-			typeof cookieObject.value === 'string' ? cookieObject.value : JSON.stringify(cookieObject.value),
-			options
+			typeof cookieObject.value === 'string' ?
+				cookieObject.value
+			:	JSON.stringify(cookieObject.value),
+			options,
 		)
 	}
 
 	public static async renderHeaders(): Promise<string[]> {
-		let headers = []
+		const headers = []
 		for (const key of Object(this._cookies).keys()) {
 			const value = this._cookies[key]
 			headers.push(this.renderHeader(value))

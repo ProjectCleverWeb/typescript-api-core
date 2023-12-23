@@ -17,7 +17,7 @@ export enum E_detectType {
 	error = 'error',
 	nan = 'nan',
 	symbol = 'symbol',
-	function = 'function'
+	function = 'function',
 }
 
 /**
@@ -30,7 +30,7 @@ export type T_detectType = keyof typeof E_detectType
  */
 export enum E_detectTypeGroupNullable {
 	null = E_detectType.null,
-	undefined = E_detectType.undefined
+	undefined = E_detectType.undefined,
 }
 
 /**
@@ -44,7 +44,7 @@ export type T_detectTypeGroupNullable = keyof typeof E_detectTypeGroupNullable
 export enum E_detectTypeGroupNumeric {
 	number = E_detectType.number,
 	bigint = E_detectType.bigint,
-	infinity = E_detectType.infinity
+	infinity = E_detectType.infinity,
 }
 
 /**
@@ -58,13 +58,14 @@ export type T_detectTypeGroupNumeric = keyof typeof E_detectTypeGroupNumeric
 export enum E_detectTypeGroupParsableNumeric {
 	number = E_detectType.number,
 	string = E_detectType.string,
-	bigint = E_detectType.bigint
+	bigint = E_detectType.bigint,
 }
 
 /**
  * The types that are considered numeric as a type
  */
-export type T_detectTypeGroupParsableNumeric = typeof E_detectTypeGroupParsableNumeric
+export type T_detectTypeGroupParsableNumeric =
+	typeof E_detectTypeGroupParsableNumeric
 
 /**
  * The types that are considered scalar as a enum
@@ -72,7 +73,7 @@ export type T_detectTypeGroupParsableNumeric = typeof E_detectTypeGroupParsableN
 export enum E_detectTypeGroupScalar {
 	number = E_detectType.number,
 	string = E_detectType.string,
-	boolean = E_detectType.boolean
+	boolean = E_detectType.boolean,
 }
 
 /**
@@ -88,7 +89,7 @@ export enum E_detectTypeGroupObject {
 	null = E_detectType.null,
 	array = E_detectType.array,
 	promise = E_detectType.promise,
-	error = E_detectType.error
+	error = E_detectType.error,
 }
 
 /**
@@ -167,7 +168,10 @@ export class detect extends A_foundation {
 	 * @param {string} type The type to check against
 	 * @returns {Promise<boolean>} True if type matched, false otherwise
 	 */
-	public static async isObjectType(object: object, type: string): Promise<boolean> {
+	public static async isObjectType(
+		object: object,
+		type: string,
+	): Promise<boolean> {
 		return (await this.objectType(object)) === type
 	}
 
@@ -178,7 +182,10 @@ export class detect extends A_foundation {
 	 * @param {T_detectType[]} types This array of types to return true for
 	 * @returns {Promise<boolean>} True if type matched, false otherwise
 	 */
-	public static async isTypeIn(value: any, types: T_detectType[]): Promise<boolean> {
+	public static async isTypeIn(
+		value: any,
+		types: T_detectType[],
+	): Promise<boolean> {
 		return types.includes(await this.type(value))
 	}
 
@@ -229,7 +236,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered a number, false otherwise
 	 */
-	public static async isNumber(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isNumber(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		const type = await this.type(value)
 		if (type === 'number') {
 			return true
@@ -246,7 +256,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered a integer, false otherwise
 	 */
-	public static async isInteger(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isInteger(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		const type = await this.type(value)
 		if (type === 'number') {
 			return Number.isInteger(value)
@@ -263,7 +276,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered a float, false otherwise
 	 */
-	public static async isFloat(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isFloat(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		const type = await this.type(value)
 		if (type === 'number') {
 			return !Number.isInteger(value)
@@ -280,7 +296,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered finite, false otherwise
 	 */
-	public static async isFinite(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isFinite(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		if (!strict) {
 			value = Number(value)
 		}
@@ -294,7 +313,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered a signed integer, false otherwise
 	 */
-	public static async isSigned(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isSigned(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		if (!strict) {
 			value = Number(value)
 		}
@@ -308,7 +330,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered a negative number, false otherwise
 	 */
-	public static async isNegative(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isNegative(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		return (await this.isNumber(value, strict)) && value < 0
 	}
 
@@ -319,7 +344,7 @@ export class detect extends A_foundation {
 	 * @returns {Promise<boolean>} True if the value is considered a binary string, false otherwise
 	 */
 	public static async isBinaryString(value: any): Promise<boolean> {
-		return (await this.isType(value, 'string')) && /\A[01]\Z/.test(value)
+		return (await this.isType(value, 'string')) && /^[01]$/.test(value)
 	}
 
 	/**
@@ -329,7 +354,10 @@ export class detect extends A_foundation {
 	 * @param {boolean} strict Whether or not to use strict type checks
 	 * @returns {Promise<boolean>} True if the value is considered a boolean, false otherwise
 	 */
-	public static async isBoolean(value: any, strict: boolean = true): Promise<boolean> {
+	public static async isBoolean(
+		value: any,
+		strict: boolean = true,
+	): Promise<boolean> {
 		const type = await this.type(value)
 		if (type === 'boolean') {
 			return true

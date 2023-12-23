@@ -1,7 +1,7 @@
 import { debug } from '../debug'
 
 export abstract class A_foundation {
-	protected static async init(classMethodThis: Function) {
+	protected static async init(classMethodThis: typeof A_foundation) {
 		await debug.checkpoint.classStaticInit(classMethodThis)
 	}
 

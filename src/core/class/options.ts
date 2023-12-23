@@ -5,8 +5,8 @@ export type T_optionsState = {
 }
 
 export class options extends foundation {
-	private readonly defaultState: T_optionsState = {}
-	private readonly optionState: T_optionsState = {}
+	private readonly _defaultState: T_optionsState = {}
+	private readonly _optionState: T_optionsState = {}
 
 	/**
 	 * Create a options object
@@ -16,26 +16,26 @@ export class options extends foundation {
 	 */
 	public constructor(defaultOptions: T_optionsState, options?: T_optionsState) {
 		super()
-		this.defaultState = { ...defaultOptions }
-		this.optionState = { ...this.defaultState }
+		this._defaultState = { ...defaultOptions }
+		this._optionState = { ...this._defaultState }
 		if (typeof options !== 'undefined') {
 			;(async () => await this.set(options))()
 		}
 	}
 
 	public async getDefaults() {
-		return this.defaultState
+		return this._defaultState
 	}
 
 	public async get() {
-		return this.optionState
+		return this._optionState
 	}
 
 	public async set(options: T_optionsState) {
-		for (const key of Object.keys(this.defaultState)) {
+		for (const key of Object.keys(this._defaultState)) {
 			const type = typeof options[key]
 			if (type !== 'undefined') {
-				this.optionState[key] = options[key]
+				this._optionState[key] = options[key]
 			}
 		}
 		return this.get()
@@ -43,8 +43,8 @@ export class options extends foundation {
 
 	public async reset() {
 		// We use this method instead of object spread/assign to preserve references
-		for (const key of Object.keys(this.defaultState)) {
-			this.optionState[key] = this.defaultState[key]
+		for (const key of Object.keys(this._defaultState)) {
+			this._optionState[key] = this._defaultState[key]
 		}
 		return this.get()
 	}
