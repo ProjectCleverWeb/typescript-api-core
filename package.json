@@ -116,8 +116,12 @@
 						"class"
 					],
 					"format": [],
-					"modifiers": ["abstract"],
-					"prefix": ["A_"]
+					"modifiers": [
+						"abstract"
+					],
+					"prefix": [
+						"A_"
+					]
 				},
 				{
 					"selector": [
@@ -125,21 +129,27 @@
 						"typeParameter"
 					],
 					"format": [],
-					"prefix": ["T_"]
+					"prefix": [
+						"T_"
+					]
 				},
 				{
 					"selector": [
 						"enum"
 					],
 					"format": [],
-					"prefix": ["E_"]
+					"prefix": [
+						"E_"
+					]
 				},
 				{
 					"selector": [
 						"interface"
 					],
 					"format": [],
-					"prefix": ["I_"]
+					"prefix": [
+						"I_"
+					]
 				},
 				{
 					"selector": "memberLike",
